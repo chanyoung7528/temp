@@ -205,32 +205,35 @@ export default function JeongwonDream() {
           <DrawerClose className="absolute top-4 right-4 z-10 bg-white text-slate-900 hover:bg-slate-100 p-3 rounded-full transition-colors shadow-lg">
             <X className="w-6 h-6" />
           </DrawerClose>
-          <DrawerHeader className="text-white pt-16">
+          <DrawerHeader className="text-white pt-6 pb-4">
             <DrawerTitle className="text-2xl font-bold text-center">
               {modalTitle}
             </DrawerTitle>
-            <DrawerDescription className="text-slate-300 text-center">
+            <DrawerDescription className="text-slate-300 text-center text-sm">
               화살표로 이미지를 넘겨보세요
             </DrawerDescription>
           </DrawerHeader>
-          <div className="flex-1 p-4 overflow-hidden">
+          <div className="flex-1 px-6 pb-8 overflow-hidden flex items-center justify-center">
             <Swiper
               modules={[Navigation, Pagination]}
               navigation
               pagination={{ clickable: true }}
               initialSlide={initialSlide}
-              className="h-full bg-slate-900 rounded-xl"
+              centeredSlides={true}
+              className="h-full w-full bg-slate-900 rounded-xl"
             >
               {modalImages.map((src, idx) => (
                 <SwiperSlide
                   key={idx}
-                  className="flex items-center justify-center bg-slate-900"
+                  className="flex items-center justify-center bg-slate-900 p-4"
                 >
-                  <img
-                    src={src}
-                    alt={`${modalTitle} ${idx + 1}`}
-                    className="w-full h-full object-contain"
-                  />
+                  <div className="w-full h-full flex items-center justify-center">
+                    <img
+                      src={src}
+                      alt={`${modalTitle} ${idx + 1}`}
+                      className="max-w-full max-h-full object-contain mx-auto"
+                    />
+                  </div>
                 </SwiperSlide>
               ))}
             </Swiper>
