@@ -1,18 +1,24 @@
-import { useState, useEffect } from "react";
-import { createPortal } from "react-dom";
+import { useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { MapPin, Briefcase, Heart, X } from "lucide-react";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerDescription,
+  DrawerClose,
+} from "@/app/components/ui/drawer";
 
 export default function JeongwonDream() {
-  const [modalOpen, setModalOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const [modalImages, setModalImages] = useState<string[]>([]);
   const [modalTitle, setModalTitle] = useState("");
   const [initialSlide, setInitialSlide] = useState(0);
-  const [savedScrollY, setSavedScrollY] = useState(0);
 
   const beforeImages = [
     "/img/map/KakaoTalk_Photo_2026-01-03-13-12-32%20001.jpeg",
@@ -29,41 +35,11 @@ export default function JeongwonDream() {
   ];
 
   const openModal = (images: string[], title: string, index: number) => {
-    const scrollY = window.scrollY;
-    setSavedScrollY(scrollY);
-    document.body.style.position = "fixed";
-    document.body.style.top = `-${scrollY}px`;
-    document.body.style.width = "100%";
-    document.body.style.overflow = "hidden";
-
     setModalImages(images);
     setModalTitle(title);
     setInitialSlide(index);
-    setModalOpen(true);
+    setDrawerOpen(true);
   };
-
-  const closeModal = () => {
-    document.body.style.position = "";
-    document.body.style.top = "";
-    document.body.style.width = "";
-    document.body.style.overflow = "";
-    window.scrollTo(0, savedScrollY);
-    setModalOpen(false);
-  };
-
-  useEffect(() => {
-    if (modalOpen) {
-      const handleEsc = (e: KeyboardEvent) => {
-        if (e.key === "Escape") {
-          closeModal();
-        }
-      };
-      window.addEventListener("keydown", handleEsc);
-      return () => {
-        window.removeEventListener("keydown", handleEsc);
-      };
-    }
-  }, [modalOpen, savedScrollY]);
 
   return (
     <section className="py-20 px-6 bg-gradient-to-b from-sky-50 via-white to-slate-50 animate-on-scroll">
@@ -224,59 +200,43 @@ export default function JeongwonDream() {
         </div>
       </div>
 
-      {modalOpen &&
-        createPortal(
-          <div
-            className="fixed inset-0 z-[9999] bg-black/95 flex flex-col items-center justify-center p-4"
-            onClick={closeModal}
-          >
-            <button
-              onClick={closeModal}
-              className="absolute top-4 right-4 bg-white text-slate-900 hover:bg-slate-100 p-3 rounded-full transition-colors shadow-lg z-10"
-              aria-label="닫기"
+      <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
+        <DrawerContent className="bg-slate-950">
+          <DrawerClose className="absolute top-4 right-4 z-10 bg-white text-slate-900 hover:bg-slate-100 p-3 rounded-full transition-colors shadow-lg">
+            <X className="w-6 h-6" />
+          </DrawerClose>
+          <DrawerHeader className="text-white pt-16">
+            <DrawerTitle className="text-2xl font-bold text-center">
+              {modalTitle}
+            </DrawerTitle>
+            <DrawerDescription className="text-slate-300 text-center">
+              화살표로 이미지를 넘겨보세요
+            </DrawerDescription>
+          </DrawerHeader>
+          <div className="flex-1 p-4 overflow-hidden">
+            <Swiper
+              modules={[Navigation, Pagination]}
+              navigation
+              pagination={{ clickable: true }}
+              initialSlide={initialSlide}
+              className="h-full bg-slate-900 rounded-xl"
             >
-              <X className="w-6 h-6" />
-            </button>
-
-            <div
-              className="w-full max-w-6xl h-full flex flex-col py-16"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="text-center mb-4 flex-shrink-0">
-                <h3 className="text-2xl font-bold text-white mb-1">
-                  {modalTitle}
-                </h3>
-                <p className="text-sm text-slate-300">
-                  화살표로 이미지를 넘겨보세요
-                </p>
-              </div>
-
-              <div className="flex-1 min-h-0">
-                <Swiper
-                  modules={[Navigation, Pagination]}
-                  navigation
-                  pagination={{ clickable: true }}
-                  initialSlide={initialSlide}
-                  className="h-full bg-slate-900 rounded-xl"
+              {modalImages.map((src, idx) => (
+                <SwiperSlide
+                  key={idx}
+                  className="flex items-center justify-center bg-slate-900"
                 >
-                  {modalImages.map((src, idx) => (
-                    <SwiperSlide
-                      key={idx}
-                      className="flex items-center justify-center bg-slate-900"
-                    >
-                      <img
-                        src={src}
-                        alt={`${modalTitle} ${idx + 1}`}
-                        className="w-full h-full object-contain"
-                      />
-                    </SwiperSlide>
-                  ))}
-                </Swiper>
-              </div>
-            </div>
-          </div>,
-          document.body
-        )}
+                  <img
+                    src={src}
+                    alt={`${modalTitle} ${idx + 1}`}
+                    className="w-full h-full object-contain"
+                  />
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          </div>
+        </DrawerContent>
+      </Drawer>
     </section>
   );
 }
