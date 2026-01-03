@@ -23,11 +23,14 @@ export default function JeongwonDream() {
   const beforeImages = [
     "/img/map/KakaoTalk_Photo_2026-01-03-13-12-32%20001.jpeg",
     "/img/map/KakaoTalk_Photo_2026-01-03-13-12-33%20002.jpeg",
-    "/img/map/KakaoTalk_Photo_2026-01-03-13-12-33%20003.jpeg",
-    "/img/map/KakaoTalk_Photo_2026-01-03-13-12-33%20004.jpeg",
+    "/img/map/KakaoTalk_Photo_2026-01-03-14-17-113.jpeg",
+    "/img/map/KakaoTalk_Photo_2026-01-03-14-17-10.jpeg",
+    "/img/map/KakaoTalk_Photo_2026-01-03-14-17-101.jpeg",
   ];
 
   const afterImages = [
+    "/img/map/KakaoTalk_Photo_2026-01-03-13-12-33%20003.jpeg",
+    "/img/map/KakaoTalk_Photo_2026-01-03-13-12-33%20004.jpeg",
     "/img/map/KakaoTalk_Photo_2026-01-03-13-12-50%20001.jpeg",
     "/img/map/KakaoTalk_Photo_2026-01-03-13-12-51%20002.jpeg",
     "/img/map/KakaoTalk_Photo_2026-01-03-13-12-52%20003.jpeg",
