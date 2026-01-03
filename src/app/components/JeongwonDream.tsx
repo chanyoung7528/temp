@@ -144,6 +144,7 @@ export default function JeongwonDream() {
                     navigation
                     pagination={{ clickable: true }}
                     autoplay={false}
+                    loop={true}
                     className="h-96"
                   >
                     {beforeImages.map((src, idx) => (
@@ -178,6 +179,7 @@ export default function JeongwonDream() {
                     navigation
                     pagination={{ clickable: true }}
                     autoplay={false}
+                    loop={true}
                     className="h-96"
                   >
                     {afterImages.map((src, idx) => (
@@ -223,6 +225,7 @@ export default function JeongwonDream() {
               pagination={{ clickable: true }}
               initialSlide={initialSlide}
               centeredSlides={true}
+              loop={true}
               className="h-full w-full bg-slate-900 rounded-xl"
             >
               {modalImages.map((src, idx) => (

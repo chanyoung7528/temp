@@ -1,11 +1,44 @@
+import { useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
-import { Building2, Shield, CheckCircle } from "lucide-react";
+import { Building2, PawPrint, Users, X } from "lucide-react";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerDescription,
+  DrawerClose,
+} from "@/app/components/ui/drawer";
 
 export default function OurHome() {
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [initialSlide, setInitialSlide] = useState(0);
+
+  const images = [
+    "/img/sangork/KakaoTalk_20220404_120007976.jpg",
+    "/img/sangork/KakaoTalk_20220404_120007976_04.jpg",
+    "/img/sangork/KakaoTalk_20220404_120007976_09.jpg",
+    "/img/sangork/KakaoTalk_20220404_120007976_10.jpg",
+    "/img/sangork/KakaoTalk_20220404_120007976_12.jpg",
+    "/img/sangork/KakaoTalk_20220404_120007976_13.jpg",
+    "/img/sangork/KakaoTalk_20220404_120007976_15.jpg",
+    "/img/sangork/gork1.jpg",
+    "/img/sangork/gork3.jpg",
+    "/img/sangork/gork6.jpg",
+    "/img/sangork/gork9.jpg",
+    "/img/sangork/grok4.jpg",
+    "/img/sangork/grok7.jpg",
+  ];
+
+  const openModal = (index: number) => {
+    setInitialSlide(index);
+    setDrawerOpen(true);
+  };
+
   return (
     <section className="py-20 px-6 bg-gradient-to-b from-sky-50 via-white to-slate-50 animate-on-scroll">
       <div className="max-w-6xl mx-auto">
@@ -25,58 +58,22 @@ export default function OurHome() {
               modules={[Navigation, Pagination, Autoplay]}
               navigation
               pagination={{ clickable: true }}
-              autoplay={{ delay: 4000 }}
+              loop={true}
               className="h-96"
             >
-              <SwiperSlide className="flex items-center justify-center bg-slate-900">
-                <img
-                  src="/img/sangork/KakaoTalk_20220404_120007976.jpg"
-                  alt="산곡 쌍용더플래티넘"
-                  className="w-full h-full object-cover"
-                />
-              </SwiperSlide>
-              <SwiperSlide className="flex items-center justify-center bg-slate-900">
-                <img
-                  src="/img/sangork/KakaoTalk_20220404_120007976_04.jpg"
-                  alt="산곡 쌍용더플래티넘 2"
-                  className="w-full h-full object-cover"
-                />
-              </SwiperSlide>
-              <SwiperSlide className="flex items-center justify-center bg-slate-900">
-                <img
-                  src="/img/sangork/KakaoTalk_20220404_120007976_09.jpg"
-                  alt="산곡 쌍용더플래티넘 3"
-                  className="w-full h-full object-cover"
-                />
-              </SwiperSlide>
-              <SwiperSlide className="flex items-center justify-center bg-slate-900">
-                <img
-                  src="/img/sangork/KakaoTalk_20220404_120007976_10.jpg"
-                  alt="산곡 쌍용더플래티넘 4"
-                  className="w-full h-full object-cover"
-                />
-              </SwiperSlide>
-              <SwiperSlide className="flex items-center justify-center bg-slate-900">
-                <img
-                  src="/img/sangork/KakaoTalk_20220404_120007976_12.jpg"
-                  alt="산곡 쌍용더플래티넘 5"
-                  className="w-full h-full object-cover"
-                />
-              </SwiperSlide>
-              <SwiperSlide className="flex items-center justify-center bg-slate-900">
-                <img
-                  src="/img/sangork/KakaoTalk_20220404_120007976_13.jpg"
-                  alt="산곡 쌍용더플래티넘 6"
-                  className="w-full h-full object-cover"
-                />
-              </SwiperSlide>
-              <SwiperSlide className="flex items-center justify-center bg-slate-900">
-                <img
-                  src="/img/sangork/KakaoTalk_20220404_120007976_15.jpg"
-                  alt="산곡 쌍용더플래티넘 7"
-                  className="w-full h-full object-cover"
-                />
-              </SwiperSlide>
+              {images.map((src, idx) => (
+                <SwiperSlide
+                  key={idx}
+                  className="flex items-center justify-center bg-slate-900 cursor-pointer"
+                  onClick={() => openModal(idx)}
+                >
+                  <img
+                    src={src}
+                    alt={`산곡 쌍용더플래티넘 ${idx + 1}`}
+                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-200"
+                  />
+                </SwiperSlide>
+              ))}
             </Swiper>
           </div>
 
@@ -103,16 +100,20 @@ export default function OurHome() {
             <div className="bg-white/90 backdrop-blur-sm p-6 rounded-2xl shadow-md border border-slate-100">
               <div className="flex items-start gap-4">
                 <div className="bg-sky-700 w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 shadow-md">
-                  <Shield className="w-6 h-6 text-white" />
+                  <PawPrint className="w-6 h-6 text-white" />
                 </div>
                 <div>
                   <h3 className="text-2xl mb-2 text-slate-900 font-bold">
-                    신축의 안전함
+                    반려견 친화적 환경
                   </h3>
                   <p className="text-slate-700">
-                    <span className="font-semibold text-sky-700">정원이</span>가
-                    혼자 있어도 안심할 수 있는 철저한 보안과 쾌적한 커뮤니티
-                    시설을 갖춘 신축 단지입니다.
+                    인근{" "}
+                    <span className="font-semibold text-sky-700 bg-sky-100 px-1 rounded">
+                      원적산공원
+                    </span>
+                    에서 일상적 산책이 가능하고, 단지 내 보행로도 잘 정비되어
+                    반려견과 안전한 생활 환경을 제공합니다. 장기 거주를 고려한
+                    안정적인 생활 조건입니다.
                   </p>
                 </div>
               </div>
@@ -121,21 +122,20 @@ export default function OurHome() {
             <div className="bg-white/90 backdrop-blur-sm p-6 rounded-2xl shadow-md border border-slate-100">
               <div className="flex items-start gap-4">
                 <div className="bg-slate-900 w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 shadow-md">
-                  <CheckCircle className="w-6 h-6 text-white" />
+                  <Users className="w-6 h-6 text-white" />
                 </div>
                 <div>
                   <h3 className="text-2xl mb-2 text-slate-900 font-bold">
-                    사위의 실행력
+                    가족과 가까운 위치
                   </h3>
                   <p className="text-slate-700">
-                    장모님께 허락을 구하기 전, 이미{" "}
+                    장모님 댁과{" "}
                     <span className="font-semibold text-sky-700 bg-sky-100 px-1 rounded">
-                      발품을 팔아 계약을 완료
-                    </span>
-                    했습니다.
-                    <span className="font-semibold text-sky-700">정원이</span>는
-                    오직 본인의 앞날과 저희의 미래에만 집중할 수 있도록 모든
-                    물리적 기반을 닦아두었습니다.
+                      대중교통 약 20분
+                    </span>{" "}
+                    거리(인천2호선 석남역), 검암역 인근 언니 댁과도 가까워 가족
+                    간 왕래가 용이합니다. 예상치 못한 상황에서도 가족의 도움을
+                    받기 쉬운 최적의 거리입니다.
                   </p>
                 </div>
               </div>
@@ -143,6 +143,48 @@ export default function OurHome() {
           </div>
         </div>
       </div>
+
+      <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
+        <DrawerContent className="bg-slate-950">
+          <DrawerClose className="absolute top-4 right-4 z-10 bg-white text-slate-900 hover:bg-slate-100 p-3 rounded-full transition-colors shadow-lg">
+            <X className="w-6 h-6" />
+          </DrawerClose>
+          <DrawerHeader className="text-white pt-6 pb-4">
+            <DrawerTitle className="text-2xl font-bold text-center">
+              산곡 쌍용더플래티넘
+            </DrawerTitle>
+            <DrawerDescription className="text-slate-300 text-center text-sm">
+              화살표로 이미지를 넘겨보세요
+            </DrawerDescription>
+          </DrawerHeader>
+          <div className="flex-1 px-6 pb-8 overflow-hidden flex items-center justify-center">
+            <Swiper
+              modules={[Navigation, Pagination]}
+              navigation
+              pagination={{ clickable: true }}
+              initialSlide={initialSlide}
+              centeredSlides={true}
+              loop={true}
+              className="h-full w-full bg-slate-900 rounded-xl"
+            >
+              {images.map((src, idx) => (
+                <SwiperSlide
+                  key={idx}
+                  className="flex items-center justify-center bg-slate-900 p-4"
+                >
+                  <div className="w-full h-full flex items-center justify-center">
+                    <img
+                      src={src}
+                      alt={`산곡 쌍용더플래티넘 ${idx + 1}`}
+                      className="max-w-full max-h-full object-contain mx-auto"
+                    />
+                  </div>
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          </div>
+        </DrawerContent>
+      </Drawer>
     </section>
   );
 }
