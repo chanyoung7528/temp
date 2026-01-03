@@ -37,27 +37,38 @@ export default function JeongwonDream() {
     setModalOpen(false);
   };
 
-  // ESC 키로 모달 닫기
-  useEffect(() => {
-    const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && modalOpen) {
-        closeModal();
-      }
-    };
-    window.addEventListener("keydown", handleEsc);
-    return () => window.removeEventListener("keydown", handleEsc);
-  }, [modalOpen]);
-
-  // 모달 열릴 때 스크롤 방지
+  // 모달 열릴 때 스크롤 완전 방지
   useEffect(() => {
     if (modalOpen) {
+      // 현재 스크롤 위치 저장
+      const scrollY = window.scrollY;
+
+      // body 스크롤 방지
+      document.body.style.position = "fixed";
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = "100%";
       document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
+
+      // ESC 키로 모달 닫기
+      const handleEsc = (e: KeyboardEvent) => {
+        if (e.key === "Escape") {
+          closeModal();
+        }
+      };
+      window.addEventListener("keydown", handleEsc);
+
+      return () => {
+        // 스크롤 복원
+        const scrollY = document.body.style.top;
+        document.body.style.position = "";
+        document.body.style.top = "";
+        document.body.style.width = "";
+        document.body.style.overflow = "";
+        window.scrollTo(0, parseInt(scrollY || "0") * -1);
+
+        window.removeEventListener("keydown", handleEsc);
+      };
     }
-    return () => {
-      document.body.style.overflow = "unset";
-    };
   }, [modalOpen]);
 
   return (
@@ -219,25 +230,37 @@ export default function JeongwonDream() {
         </div>
       </div>
 
-      {/* 확대 모달 */}
+      {/* 확대 모달 - 완전히 고정 */}
       {modalOpen && (
         <div
-          className="fixed inset-0 z-50 bg-black/95 flex flex-col items-center justify-center p-4"
+          className="fixed inset-0 z-[9999] bg-black/95"
+          style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0 }}
           onClick={closeModal}
         >
+          {/* 닫기 버튼 - 항상 보이게 */}
           <button
             onClick={closeModal}
-            className="absolute top-4 right-4 z-50 bg-white/10 hover:bg-white/20 text-white p-3 rounded-full transition-colors"
+            className="fixed top-4 right-4 z-[10000] bg-white text-slate-900 hover:bg-slate-100 p-3 rounded-full transition-colors shadow-lg"
             aria-label="닫기"
+            style={{ position: "fixed" }}
           >
             <X className="w-6 h-6" />
           </button>
 
+          {/* 모달 컨텐츠 */}
           <div
-            className="w-full max-w-6xl h-full flex flex-col py-16"
+            className="fixed inset-0 flex flex-col items-center justify-center p-4 pt-20 pb-8"
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              overscrollBehavior: "contain",
+            }}
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="mb-4 text-center flex-shrink-0">
+            <div className="text-center mb-4 flex-shrink-0">
               <h3 className="text-2xl font-bold text-white mb-1">
                 {modalTitle}
               </h3>
@@ -246,7 +269,7 @@ export default function JeongwonDream() {
               </p>
             </div>
 
-            <div className="flex-1 min-h-0">
+            <div className="w-full max-w-6xl flex-1 min-h-0">
               <Swiper
                 modules={[Navigation, Pagination]}
                 navigation
