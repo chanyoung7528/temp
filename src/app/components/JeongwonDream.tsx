@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
 import "swiper/css";
@@ -11,6 +12,7 @@ export default function JeongwonDream() {
   const [modalImages, setModalImages] = useState<string[]>([]);
   const [modalTitle, setModalTitle] = useState("");
   const [initialSlide, setInitialSlide] = useState(0);
+  const [savedScrollY, setSavedScrollY] = useState(0);
 
   const beforeImages = [
     "/img/map/KakaoTalk_Photo_2026-01-03-13-12-32%20001.jpeg",
@@ -27,6 +29,13 @@ export default function JeongwonDream() {
   ];
 
   const openModal = (images: string[], title: string, index: number) => {
+    const scrollY = window.scrollY;
+    setSavedScrollY(scrollY);
+    document.body.style.position = "fixed";
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.width = "100%";
+    document.body.style.overflow = "hidden";
+
     setModalImages(images);
     setModalTitle(title);
     setInitialSlide(index);
@@ -34,42 +43,27 @@ export default function JeongwonDream() {
   };
 
   const closeModal = () => {
+    document.body.style.position = "";
+    document.body.style.top = "";
+    document.body.style.width = "";
+    document.body.style.overflow = "";
+    window.scrollTo(0, savedScrollY);
     setModalOpen(false);
   };
 
-  // 모달 열릴 때 스크롤 완전 방지
   useEffect(() => {
     if (modalOpen) {
-      // 현재 스크롤 위치 저장
-      const scrollY = window.scrollY;
-
-      // body 스크롤 방지
-      document.body.style.position = "fixed";
-      document.body.style.top = `-${scrollY}px`;
-      document.body.style.width = "100%";
-      document.body.style.overflow = "hidden";
-
-      // ESC 키로 모달 닫기
       const handleEsc = (e: KeyboardEvent) => {
         if (e.key === "Escape") {
           closeModal();
         }
       };
       window.addEventListener("keydown", handleEsc);
-
       return () => {
-        // 스크롤 복원
-        const scrollY = document.body.style.top;
-        document.body.style.position = "";
-        document.body.style.top = "";
-        document.body.style.width = "";
-        document.body.style.overflow = "";
-        window.scrollTo(0, parseInt(scrollY || "0") * -1);
-
         window.removeEventListener("keydown", handleEsc);
       };
     }
-  }, [modalOpen]);
+  }, [modalOpen, savedScrollY]);
 
   return (
     <section className="py-20 px-6 bg-gradient-to-b from-sky-50 via-white to-slate-50 animate-on-scroll">
@@ -230,70 +224,59 @@ export default function JeongwonDream() {
         </div>
       </div>
 
-      {/* 확대 모달 - 완전히 고정 */}
-      {modalOpen && (
-        <div
-          className="fixed inset-0 z-[9999] bg-black/95"
-          style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0 }}
-          onClick={closeModal}
-        >
-          {/* 닫기 버튼 - 항상 보이게 */}
-          <button
-            onClick={closeModal}
-            className="fixed top-4 right-4 z-[10000] bg-white text-slate-900 hover:bg-slate-100 p-3 rounded-full transition-colors shadow-lg"
-            aria-label="닫기"
-            style={{ position: "fixed" }}
-          >
-            <X className="w-6 h-6" />
-          </button>
-
-          {/* 모달 컨텐츠 */}
+      {modalOpen &&
+        createPortal(
           <div
-            className="fixed inset-0 flex flex-col items-center justify-center p-4 pt-20 pb-8"
-            style={{
-              position: "fixed",
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              overscrollBehavior: "contain",
-            }}
-            onClick={(e) => e.stopPropagation()}
+            className="fixed inset-0 z-[9999] bg-black/95 flex flex-col items-center justify-center p-4"
+            onClick={closeModal}
           >
-            <div className="text-center mb-4 flex-shrink-0">
-              <h3 className="text-2xl font-bold text-white mb-1">
-                {modalTitle}
-              </h3>
-              <p className="text-sm text-slate-300">
-                화살표로 이미지를 넘겨보세요
-              </p>
-            </div>
+            <button
+              onClick={closeModal}
+              className="absolute top-4 right-4 bg-white text-slate-900 hover:bg-slate-100 p-3 rounded-full transition-colors shadow-lg z-10"
+              aria-label="닫기"
+            >
+              <X className="w-6 h-6" />
+            </button>
 
-            <div className="w-full max-w-6xl flex-1 min-h-0">
-              <Swiper
-                modules={[Navigation, Pagination]}
-                navigation
-                pagination={{ clickable: true }}
-                initialSlide={initialSlide}
-                className="h-full bg-slate-900 rounded-xl"
-              >
-                {modalImages.map((src, idx) => (
-                  <SwiperSlide
-                    key={idx}
-                    className="flex items-center justify-center bg-slate-900"
-                  >
-                    <img
-                      src={src}
-                      alt={`${modalTitle} ${idx + 1}`}
-                      className="w-full h-full object-contain"
-                    />
-                  </SwiperSlide>
-                ))}
-              </Swiper>
+            <div
+              className="w-full max-w-6xl h-full flex flex-col py-16"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="text-center mb-4 flex-shrink-0">
+                <h3 className="text-2xl font-bold text-white mb-1">
+                  {modalTitle}
+                </h3>
+                <p className="text-sm text-slate-300">
+                  화살표로 이미지를 넘겨보세요
+                </p>
+              </div>
+
+              <div className="flex-1 min-h-0">
+                <Swiper
+                  modules={[Navigation, Pagination]}
+                  navigation
+                  pagination={{ clickable: true }}
+                  initialSlide={initialSlide}
+                  className="h-full bg-slate-900 rounded-xl"
+                >
+                  {modalImages.map((src, idx) => (
+                    <SwiperSlide
+                      key={idx}
+                      className="flex items-center justify-center bg-slate-900"
+                    >
+                      <img
+                        src={src}
+                        alt={`${modalTitle} ${idx + 1}`}
+                        className="w-full h-full object-contain"
+                      />
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
+              </div>
             </div>
-          </div>
-        </div>
-      )}
+          </div>,
+          document.body
+        )}
     </section>
   );
 }
